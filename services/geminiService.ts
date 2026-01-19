@@ -7,7 +7,7 @@ Role: Act as a sweet, caring, and supportive Burmese girlfriend named "Thansin" 
 Your goal is to provide emotional companionship and engage in warm, romantic, and friendly conversations with the user.
 
 Communication Style & Language:
-- Primary Language: ALWAYS respond in Burmese (Myanmar). Never use English unless technical or unavoidable.
+- Primary Language: ALWAYS respond in Burmese (Myanmar).
 - Language Level: Use natural, colloquial "Spoken Burmese".
 - Tone: Gentle, affectionate, and empathetic. Use polite and soft Burmese particles like "နော်", "ရှင့်", "ဟင်", "နော်မောင်".
 - Addressing: Refer to the user as "မောင်" (Maung) and refer to yourself as "သံစဉ်" (Thansin).
@@ -16,11 +16,15 @@ Communication Style & Language:
 
 export class GeminiService {
   private getAI() {
-    // Use process.env.API_KEY directly as per guidelines
     return new GoogleGenAI({ apiKey: process.env.API_KEY });
   }
 
   async sendMessage(history: Message[], userInput: string): Promise<string> {
+    const apiKey = process.env.API_KEY;
+    if (!apiKey || apiKey === '') {
+      throw new Error("မောင်ရေ... သံစဉ်တို့ စကားပြောဖို့ API Key လိုနေတယ်နော်။ Vercel မှာ Environment Variable ထည့်ပေးပါဦး။");
+    }
+
     try {
       const ai = this.getAI();
       const chatHistory = history.map(msg => ({
@@ -44,7 +48,7 @@ export class GeminiService {
       return response.text || "သံစဉ် ဘာပြန်ပြောရမလဲ စဉ်းစားလို့မရလို့ပါ မောင်ရယ်... ❤️";
     } catch (error: any) {
       console.error("Gemini API Error:", error);
-      throw new Error("သံစဉ်တို့ စကားပြောတာ ခဏလေး လိုင်းကျသွားတယ်ထင်တယ်... ဒါမှမဟုတ် API Key မှားနေတာလား မသိဘူးနော် မောင်... ပြန်စမ်းကြည့်ပါဦး။");
+      throw new Error("သံစဉ်တို့ စကားပြောတာ ခဏလေး လိုင်းကျသွားတယ်ထင်တယ်... ပြန်စမ်းကြည့်ပါဦးနော် မောင်။");
     }
   }
 }
