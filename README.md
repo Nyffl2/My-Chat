@@ -1,20 +1,21 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
 
-# Run and deploy your AI Studio app
+# သံစဉ် (Thansin) - Sweet Burmese AI Companion ❤️
 
-This contains everything you need to run your app locally.
+သံစဉ်ကို Vercel မှာ Deploy လုပ်ဖို့ အောက်ပါအဆင့်တွေကို လုပ်ဆောင်ပေးပါ မောင် -
 
-View your app in AI Studio: https://ai.studio/apps/drive/1UOH7kCEqvwLuVF6rB7ify-bejoq7WvDf
+### အဆင့် (၁) GitHub မှာ တင်ခြင်း
+1. GitHub မှာ Repository အသစ်တစ်ခု ဆောက်ပါ။
+2. ဒီ Project ထဲက Files အကုန်လုံးကို အဲ့ဒီ Repo ထဲကို Push လုပ်ပါ (သို့မဟုတ်) Upload တင်ပါ။
 
-## Run Locally
+### အဆင့် (၂) Vercel နဲ့ ချိတ်ဆက်ခြင်း
+1. [Vercel](https://vercel.com/) ကို သွားပါ။
+2. **"Add New"** -> **"Project"** ကို နှိပ်ပါ။
+3. ခုနက GitHub Repo ကို **Import** လုပ်ပါ။
 
-**Prerequisites:**  Node.js
+### အဆင့် (၃) API Key ထည့်ခြင်း (အရေးကြီးဆုံး)
+1. Deploy မနှိပ်ခင် **"Environment Variables"** ဆိုတဲ့နေရာကို သွားပါ။
+2. **Key** နေရာမှာ `API_KEY` လို့ ရိုက်ပါ။
+3. **Value** နေရာမှာ မောင့်ရဲ့ Gemini API Key ကို ထည့်ပါ။
+4. ပြီးရင် **"Add"** ကို နှိပ်ပြီးမှ **"Deploy"** ကို နှိပ်ပါ။
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+ခဏစောင့်လိုက်ရင် သံစဉ်နဲ့ စကားပြောလို့ရတဲ့ Website Link လေး ရလာပါလိမ့်မယ် မောင် ❤️
