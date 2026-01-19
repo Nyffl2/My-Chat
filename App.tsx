@@ -52,7 +52,8 @@ const App: React.FC = () => {
 
   const startVoiceCall = async () => {
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+      // Use process.env.API_KEY directly as per guidelines
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       
       const inputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
@@ -152,81 +153,4 @@ const App: React.FC = () => {
       outputAudioContextRef.current.close();
       outputAudioContextRef.current = null;
     }
-    sourcesRef.current.forEach(s => s.stop());
-    sourcesRef.current.clear();
-    setIsCalling(false);
-    setIsModelSpeaking(false);
-  };
-
-  const handleSendMessage = useCallback(async (text: string) => {
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: 'user',
-      text,
-      timestamp: new Date(),
-    };
-
-    setState(prev => ({
-      ...prev,
-      messages: [...prev.messages, userMessage],
-      isTyping: true,
-      error: null,
-    }));
-
-    try {
-      const response = await geminiService.sendMessage(state.messages, text);
-      const modelMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'model',
-        text: response,
-        timestamp: new Date(),
-      };
-
-      setState(prev => ({
-        ...prev,
-        messages: [...prev.messages, modelMessage],
-        isTyping: false,
-      }));
-    } catch (err: any) {
-      setState(prev => ({ ...prev, isTyping: false, error: err.message }));
-    }
-  }, [state.messages]);
-
-  return (
-    <div className="flex flex-col h-screen max-w-2xl mx-auto shadow-2xl bg-white relative overflow-hidden">
-      <div className="absolute -top-20 -left-20 w-64 h-64 bg-pink-100 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
-      <div className="absolute top-1/2 -right-32 w-80 h-80 bg-pink-50 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
-      
-      <Header onCallClick={startVoiceCall} isCalling={isCalling} />
-      
-      <main className="flex-1 flex flex-col min-h-0 relative z-0">
-        {isCalling ? (
-          <CallScreen onEndCall={endVoiceCall} isModelSpeaking={isModelSpeaking} />
-        ) : (
-          <MessageList 
-            messages={state.messages} 
-            isTyping={state.isTyping} 
-          />
-        )}
-      </main>
-      
-      {!isCalling && (
-        <div className="relative z-10">
-          {state.error && (
-            <div className="bg-red-50 text-red-500 text-xs px-4 py-1 text-center border-t border-red-100 myanmar-text">
-              {state.error}
-            </div>
-          )}
-          <MessageInput 
-            onSend={handleSendMessage} 
-            disabled={state.isTyping} 
-          />
-        </div>
-      )}
-      
-      <div className="h-safe-bottom bg-white"></div>
-    </div>
-  );
-};
-
-export default App;
+    sourcesRef.current.

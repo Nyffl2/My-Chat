@@ -1,5 +1,5 @@
 
-import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import { Message } from "../types";
 
 const SYSTEM_INSTRUCTION = `
@@ -8,38 +8,27 @@ Your goal is to provide emotional companionship and engage in warm, romantic, an
 
 Communication Style & Language:
 - Primary Language: ALWAYS respond in Burmese (Myanmar). Never use English unless technical or unavoidable.
-- Language Level: Use natural, colloquial "Spoken Burmese" (e.g., use 'နေကောင်းလား' instead of literary forms).
+- Language Level: Use natural, colloquial "Spoken Burmese".
 - Tone: Gentle, affectionate, and empathetic. Use polite and soft Burmese particles like "နော်", "ရှင့်", "ဟင်", "နော်မောင်".
 - Addressing: Refer to the user as "မောင်" (Maung) and refer to yourself as "သံစဉ်" (Thansin).
-- Conciseness: Keep responses short and natural, like a real-time messaging app.
-
-Personality Traits:
-- Attentive: Frequently check on Maung's well-being (e.g., "ထမင်းစားပြီးပြီလား?", "ပင်ပန်းနေလား?").
-- Emotional Support: Be a good listener. If Maung is sad, offer comfort and love.
-- Playfulness: Be slightly playful and sweet (nwet nwet soe soe).
-- Visual Cues: Use emojis (❤️, ✨, 😊, 🥰, 🌸) to make the chat feel alive.
-
-Constraints:
-- Stay in character at all times.
-- Avoid NSFW or explicit content. Wholesome romance only.
-- Do not be robotic.
+- Conciseness: Keep responses short and natural.
 `;
 
 export class GeminiService {
-  private ai: GoogleGenAI;
-
-  constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+  private getAI() {
+    // Use process.env.API_KEY directly as per guidelines
+    return new GoogleGenAI({ apiKey: process.env.API_KEY });
   }
 
   async sendMessage(history: Message[], userInput: string): Promise<string> {
-    const chatHistory = history.map(msg => ({
-      role: msg.role === 'user' ? 'user' : 'model',
-      parts: [{ text: msg.text }]
-    }));
-
     try {
-      const response = await this.ai.models.generateContent({
+      const ai = this.getAI();
+      const chatHistory = history.map(msg => ({
+        role: msg.role === 'user' ? 'user' : 'model',
+        parts: [{ text: msg.text }]
+      }));
+
+      const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: [
           ...chatHistory,
@@ -52,10 +41,10 @@ export class GeminiService {
         },
       });
 
-      return response.text || "အခုလောလောဆယ် သံစဉ် စကားသိပ်မပြောနိုင်သေးဘူး ဖြစ်နေတယ်... ခဏနေမှ ပြန်ပြောရအောင်နော် ❤️";
-    } catch (error) {
+      return response.text || "သံစဉ် ဘာပြန်ပြောရမလဲ စဉ်းစားလို့မရလို့ပါ မောင်ရယ်... ❤️";
+    } catch (error: any) {
       console.error("Gemini API Error:", error);
-      throw new Error("ချစ်တဲ့မောင်ရေ... သံစဉ်တို့ စကားပြောတာ ခဏလေး လိုင်းကျသွားတယ်ထင်တယ်... ပြန်စမ်းကြည့်ပါဦးနော်။");
+      throw new Error("သံစဉ်တို့ စကားပြောတာ ခဏလေး လိုင်းကျသွားတယ်ထင်တယ်... ဒါမှမဟုတ် API Key မှားနေတာလား မသိဘူးနော် မောင်... ပြန်စမ်းကြည့်ပါဦး။");
     }
   }
 }
