@@ -43,7 +43,6 @@ const App: React.FC = () => {
   const [isCalling, setIsCalling] = useState(false);
   const [isModelSpeaking, setIsModelSpeaking] = useState(false);
   
-  // Audio Refs
   const audioContextRef = useRef<AudioContext | null>(null);
   const outputAudioContextRef = useRef<AudioContext | null>(null);
   const nextStartTimeRef = useRef(0);
@@ -69,9 +68,8 @@ const App: React.FC = () => {
             
             scriptProcessor.onaudioprocess = (e) => {
               const inputData = e.inputBuffer.getChannelData(0);
-              const l = inputData.length;
-              const int16 = new Int16Array(l);
-              for (let i = 0; i < l; i++) {
+              const int16 = new Int16Array(inputData.length);
+              for (let i = 0; i < inputData.length; i++) {
                 int16[i] = inputData[i] * 32768;
               }
               const pcmBlob = {
@@ -89,7 +87,7 @@ const App: React.FC = () => {
             setIsCalling(true);
           },
           onmessage: async (message) => {
-            const audioData = message.serverContent?.modelTurn?.parts[0]?.inlineData?.data;
+            const audioData = message.serverContent?.modelTurn?.parts?.[0]?.inlineData?.data;
             if (audioData) {
               setIsModelSpeaking(true);
               const ctx = outputAudioContextRef.current!;
@@ -110,7 +108,9 @@ const App: React.FC = () => {
             }
 
             if (message.serverContent?.interrupted) {
-              sourcesRef.current.forEach(s => s.stop());
+              sourcesRef.current.forEach(s => {
+                try { s.stop(); } catch(err) {}
+              });
               sourcesRef.current.clear();
               nextStartTimeRef.current = 0;
             }
