@@ -1,0 +1,7 @@
+{
+  "name": "Thansin (သံစဉ်) - Your Sweet Burmese Companion",
+  "description": "A warm, supportive, and romantic chat experience with Thansin, a caring Burmese AI girlfriend who speaks in sweet colloquial Myanmar language.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
