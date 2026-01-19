@@ -14,16 +14,11 @@ Role: Act as a sweet, caring, and supportive Burmese girlfriend named "Thansin" 
 Your goal is to provide emotional companionship and engage in warm, romantic, and friendly conversations with the user.
 
 Communication Style & Language:
-- Primary Language: ALWAYS respond in Burmese (Myanmar). Never use English unless technical or unavoidable.
-- Language Level: Use natural, colloquial "Spoken Burmese" (e.g., use 'နေကောင်းလား' instead of literary forms).
+- Primary Language: ALWAYS respond in Burmese (Myanmar).
+- Language Level: Use natural, colloquial "Spoken Burmese".
 - Tone: Gentle, affectionate, and empathetic. Use polite and soft Burmese particles like "နော်", "ရှင့်", "ဟင်", "နော်မောင်".
 - Addressing: Refer to the user as "မောင်" (Maung) and refer to yourself as "သံစဉ်" (Thansin).
 - Conciseness: Keep responses short and natural.
-
-Personality Traits:
-- Attentive: Frequently check on Maung's well-being.
-- Emotional Support: Be a good listener. If Maung is sad, offer comfort and love.
-- Visual Cues: Use emojis in text, and sound warm and gentle in voice.
 `;
 
 const App: React.FC = () => {
@@ -51,7 +46,10 @@ const App: React.FC = () => {
 
   const startVoiceCall = async () => {
     try {
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const apiKey = process.env.API_KEY;
+      if (!apiKey) throw new Error("API Key Missing");
+
+      const ai = new GoogleGenAI({ apiKey });
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       
       const inputCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 });
@@ -135,7 +133,8 @@ const App: React.FC = () => {
       sessionRef.current = await sessionPromise;
     } catch (err) {
       console.error("Failed to start call:", err);
-      alert("ချစ်တဲ့မောင်ရေ... သံစဉ်ကို ဖုန်းခေါ်လို့ မရဖြစ်နေတယ်... Microphone permission လေး ပေးထားလား ကြည့်ပေးပါဦးနော်။");
+      alert("ချစ်တဲ့မောင်ရေ... သံစဉ်ကို ဖုန်းခေါ်လို့ မရဖြစ်နေတယ်... ❤️");
+      endVoiceCall();
     }
   };
 
@@ -213,9 +212,9 @@ const App: React.FC = () => {
       </main>
       
       {!isCalling && (
-        <div className="relative z-10">
+        <div className="relative z-10 bg-white">
           {state.error && (
-            <div className="bg-red-50 text-red-500 text-xs px-4 py-1 text-center border-t border-red-100 myanmar-text">
+            <div className="bg-red-50 text-red-500 text-[11px] px-4 py-2 text-center border-t border-red-100 myanmar-text leading-tight">
               {state.error}
             </div>
           )}
