@@ -20,8 +20,8 @@ const Header: React.FC<HeaderProps> = ({ onCallClick, isCalling }) => {
         </div>
         <div>
           <h1 className="text-pink-600 font-bold text-lg leading-tight myanmar-text">သံစဉ် (Thansin)</h1>
-          <p className="text-pink-400 text-xs flex items-center gap-1">
-            <span className="animate-pulse">●</span> {isCalling ? 'In a call with Maung' : 'Online for Maung ❤️'}
+          <p className="text-pink-400 text-xs flex items-center gap-1 myanmar-text">
+            <span className="animate-pulse">●</span> {isCalling ? 'မောင်နဲ့ ဖုန်းပြောနေတယ် ❤️' : 'မောင့်အတွက် ရှိနေတယ်နော် ❤️'}
           </p>
         </div>
       </div>

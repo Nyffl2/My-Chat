@@ -15,19 +15,18 @@ Communication Style & Language:
 `;
 
 export class GeminiService {
-  private getAI() {
-    return new GoogleGenAI({ apiKey: process.env.API_KEY });
-  }
-
   async sendMessage(history: Message[], userInput: string): Promise<string> {
     const apiKey = process.env.API_KEY;
     if (!apiKey || apiKey === '') {
-      throw new Error("မောင်ရေ... သံစဉ်တို့ စကားပြောဖို့ API Key လိုနေတယ်နော်။ Vercel မှာ Environment Variable ထည့်ပေးပါဦး။");
+      throw new Error("မောင်ရေ... သံစဉ်တို့ စကားပြောဖို့ API Key လိုနေတယ်နော်။");
     }
 
     try {
-      const ai = this.getAI();
-      const chatHistory = history.map(msg => ({
+      const ai = new GoogleGenAI({ apiKey });
+      
+      // Convert history to Gemini format
+      // Note: We only take the last 20 messages to prevent context limit issues and keep it relevant
+      const recentHistory = history.slice(-20).map(msg => ({
         role: msg.role === 'user' ? 'user' : 'model',
         parts: [{ text: msg.text }]
       }));
@@ -35,7 +34,7 @@ export class GeminiService {
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
         contents: [
-          ...chatHistory,
+          ...recentHistory,
           { role: 'user', parts: [{ text: userInput }] }
         ],
         config: {
