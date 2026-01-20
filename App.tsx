@@ -4,6 +4,7 @@ import Header from './components/Header';
 import MessageList from './components/MessageList';
 import MessageInput from './components/MessageInput';
 import CallScreen from './components/CallScreen';
+import SettingsModal from './components/SettingsModal';
 import { Message, ChatState } from './types';
 import { geminiService } from './services/geminiService';
 import { GoogleGenAI, Modality } from '@google/genai';
@@ -32,12 +33,38 @@ const App: React.FC = () => {
   const [isCalling, setIsCalling] = useState(false);
   const [isModelSpeaking, setIsModelSpeaking] = useState(false);
   
+  // API Key Management
+  const [apiKey, setApiKey] = useState<string>('');
+  const [showSettings, setShowSettings] = useState(false);
+  
   const audioContextRef = useRef<AudioContext | null>(null);
   const outputAudioContextRef = useRef<AudioContext | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const nextStartTimeRef = useRef(0);
   const sourcesRef = useRef<Set<AudioBufferSourceNode>>(new Set());
   const sessionRef = useRef<any>(null);
+
+  // Load API Key on Mount
+  useEffect(() => {
+    const storedKey = localStorage.getItem('gemini_api_key');
+    if (storedKey) {
+      setApiKey(storedKey);
+    } else if (process.env.API_KEY) {
+      setApiKey(process.env.API_KEY);
+    } else {
+      setShowSettings(true); // Prompt for key if missing
+    }
+  }, []);
+
+  const handleSaveApiKey = (key: string) => {
+    localStorage.setItem('gemini_api_key', key);
+    setApiKey(key);
+    setShowSettings(false);
+    // Clear error if it was about missing key
+    if (state.error && state.error.includes("API Key")) {
+      setState(prev => ({ ...prev, error: null }));
+    }
+  };
 
   // Cleanup on unmount
   useEffect(() => {
@@ -74,9 +101,8 @@ const App: React.FC = () => {
 
   const startVoiceCall = async () => {
     try {
-      const apiKey = process.env.API_KEY;
       if (!apiKey) {
-        alert("API Key is missing.");
+        setShowSettings(true);
         return;
       }
 
@@ -159,7 +185,7 @@ const App: React.FC = () => {
           },
           onerror: (e) => {
             console.error('Live API Error:', e);
-            alert("Connection error.");
+            alert("Connection error. Please check your API Key and network.");
             endVoiceCall();
           },
           onclose: () => {
@@ -184,6 +210,11 @@ const App: React.FC = () => {
   };
 
   const handleSendMessage = useCallback(async (text: string) => {
+    if (!apiKey) {
+      setShowSettings(true);
+      return;
+    }
+
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
@@ -200,7 +231,7 @@ const App: React.FC = () => {
 
     try {
       const startTime = Date.now();
-      const responseText = await geminiService.sendMessage([...state.messages, userMessage], text);
+      const responseText = await geminiService.sendMessage([...state.messages, userMessage], text, apiKey);
       
       // Calculate typing delay
       const minTypingDuration = 1000;
@@ -229,7 +260,7 @@ const App: React.FC = () => {
     } catch (err: any) {
       setState(prev => ({ ...prev, isTyping: false, error: err.message }));
     }
-  }, [state.messages]);
+  }, [state.messages, apiKey]);
 
   return (
     <div className="flex flex-col h-[100dvh] max-w-2xl mx-auto shadow-2xl bg-white relative overflow-hidden">
@@ -238,6 +269,7 @@ const App: React.FC = () => {
       
       <Header 
         onCallClick={startVoiceCall} 
+        onSettingsClick={() => setShowSettings(true)}
         isCalling={isCalling} 
         isTyping={state.isTyping}
       />
@@ -253,6 +285,13 @@ const App: React.FC = () => {
         )}
       </main>
       
+      <SettingsModal 
+        isOpen={showSettings} 
+        onClose={() => setShowSettings(false)}
+        onSave={handleSaveApiKey}
+        currentKey={apiKey}
+      />
+
       {!isCalling && (
         <div className="relative z-10 bg-white shadow-[0_-4px_10px_rgba(0,0,0,0.02)]">
           {state.error && (

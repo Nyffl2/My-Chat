@@ -39,10 +39,9 @@ Do not provide any introductory or concluding remarks. Output only the valid SRT
 `;
 
 export class GeminiService {
-  async sendMessage(history: Message[], userInput: string): Promise<string> {
-    const apiKey = process.env.API_KEY;
+  async sendMessage(history: Message[], userInput: string, apiKey: string): Promise<string> {
     if (!apiKey || apiKey === '') {
-      throw new Error("API Key is missing. Please configure your Gemini API Key.");
+      throw new Error("API Key is missing. Please configure your Gemini API Key in settings.");
     }
 
     try {
@@ -71,7 +70,7 @@ export class GeminiService {
       return response.text || "No translation generated.";
     } catch (error: any) {
       console.error("Gemini API Error Details:", error.message || error);
-      throw new Error("Translation service error. Please try again.");
+      throw new Error("Translation service error. Please check your API key and try again.");
     }
   }
 }
