@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface HeaderProps {
@@ -26,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({ onCallClick, isCalling, isTyping }) => 
             {isCalling 
               ? 'မောင်နဲ့ ဖုန်းပြောနေတယ် ❤️' 
               : isTyping 
-                ? 'စာပြန်နေတယ်နော်... ✍️' 
+                ? <span className="animate-pulse">စာပြန်နေတယ်နော်... ✍️</span>
                 : 'မောင့်အတွက် ရှိနေတယ်နော် ❤️'}
           </p>
         </div>
