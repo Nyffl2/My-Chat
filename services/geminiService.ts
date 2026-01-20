@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from "@google/genai";
 import { Message } from "../types";
 
@@ -39,13 +38,9 @@ Do not provide any introductory or concluding remarks. Output only the valid SRT
 `;
 
 export class GeminiService {
-  async sendMessage(history: Message[], userInput: string, apiKey: string): Promise<string> {
-    if (!apiKey || apiKey === '') {
-      throw new Error("API Key is missing. Please configure your Gemini API Key in settings.");
-    }
-
+  async sendMessage(history: Message[], userInput: string): Promise<string> {
     try {
-      const ai = new GoogleGenAI({ apiKey });
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
       // Convert history to Gemini format
       // Note: We take the last 50 messages to provide better context
