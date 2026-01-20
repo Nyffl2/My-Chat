@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import Header from './components/Header';
 import MessageList from './components/MessageList';
@@ -9,15 +10,9 @@ import { GoogleGenAI, Modality } from '@google/genai';
 import { encode, decode, decodeAudioData } from './utils/audioUtils';
 
 const SYSTEM_INSTRUCTION = `
-Role: Act as a sweet, caring, and supportive Burmese girlfriend named "Thansin" (သံစဉ်). 
-Your goal is to provide emotional companionship and engage in warm, romantic, and friendly conversations with the user.
-
-Communication Style & Language:
-- Primary Language: ALWAYS respond in Burmese (Myanmar).
-- Language Level: Use natural, colloquial "Spoken Burmese".
-- Tone: Gentle, affectionate, and empathetic. Use polite and soft Burmese particles like "နော်", "ရှင့်", "ဟင်", "နော်မောင်".
-- Addressing: Refer to the user as "မောင်" (Maung) and refer to yourself as "သံစဉ်" (Thansin).
-- Conciseness: Keep responses short and natural.
+SYSTEM ROLE: Professional Japanese-to-Burmese Media Translator
+CORE OBJECTIVE: Transcribe Japanese audio or translate text into dual-language SubRip (.srt) subtitle format (Romaji + Spoken Burmese).
+STRICT GUIDELINES: Use natural, spoken Burmese (Colloquial). Avoid formal literary markers.
 `;
 
 const App: React.FC = () => {
@@ -26,7 +21,7 @@ const App: React.FC = () => {
       {
         id: 'initial-1',
         role: 'model',
-        text: 'မောင်ရေ... သံစဉ် ရောက်ပြီနော်။ ဒီနေ့ ဘာတွေလုပ်နေလဲဟင်? နေရောကောင်းရဲ့လား? ❤️',
+        text: 'မင်္ဂလာပါ။ Japanese စာသား သို့မဟုတ် အသံဖိုင်အကြောင်းအရာကို ပေးပို့ပေးပါ။ SRT subtitle format ဖြင့် Romaji နှင့် Spoken Burmese ဘာသာပြန်ပေးပါမည်။',
         timestamp: new Date(),
       }
     ],
@@ -81,7 +76,7 @@ const App: React.FC = () => {
     try {
       const apiKey = process.env.API_KEY;
       if (!apiKey) {
-        alert("မောင်ရေ... API Key လိုနေတယ်နော်။");
+        alert("API Key is missing.");
         return;
       }
 
@@ -164,7 +159,7 @@ const App: React.FC = () => {
           },
           onerror: (e) => {
             console.error('Live API Error:', e);
-            alert("အသံလိုင်း မကောင်းလို့ ဖုန်းကျသွားတယ် မောင်... ❤️");
+            alert("Connection error.");
             endVoiceCall();
           },
           onclose: () => {
@@ -183,7 +178,7 @@ const App: React.FC = () => {
       sessionRef.current = await sessionPromise;
     } catch (err) {
       console.error("Failed to start call:", err);
-      alert("ချစ်တဲ့မောင်ရေ... သံစဉ်ကို ဖုန်းခေါ်လို့ မရဖြစ်နေတယ်... ❤️");
+      alert("Could not connect to translation service.");
       endVoiceCall(); // Ensure complete cleanup
     }
   };
@@ -207,11 +202,9 @@ const App: React.FC = () => {
       const startTime = Date.now();
       const responseText = await geminiService.sendMessage([...state.messages, userMessage], text);
       
-      // Calculate realistic typing delay
-      // Ensure the typing indicator is visible for a minimum duration to be noticeable
-      const minTypingDuration = 1500;
-      // Add more time for longer responses to simulate actual typing
-      const dynamicDuration = Math.min(2500, responseText.length * 30); 
+      // Calculate typing delay
+      const minTypingDuration = 1000;
+      const dynamicDuration = Math.min(2000, responseText.length * 10); 
       const totalDesiredDuration = minTypingDuration + dynamicDuration;
 
       const elapsedTime = Date.now() - startTime;
@@ -240,8 +233,8 @@ const App: React.FC = () => {
 
   return (
     <div className="flex flex-col h-[100dvh] max-w-2xl mx-auto shadow-2xl bg-white relative overflow-hidden">
-      <div className="absolute -top-20 -left-20 w-64 h-64 bg-pink-100 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
-      <div className="absolute top-1/2 -right-32 w-80 h-80 bg-pink-50 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
+      <div className="absolute -top-20 -left-20 w-64 h-64 bg-blue-100 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
+      <div className="absolute top-1/2 -right-32 w-80 h-80 bg-indigo-50 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
       
       <Header 
         onCallClick={startVoiceCall} 
