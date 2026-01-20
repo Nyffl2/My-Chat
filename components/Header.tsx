@@ -4,9 +4,10 @@ import React from 'react';
 interface HeaderProps {
   onCallClick: () => void;
   isCalling: boolean;
+  isTyping?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ onCallClick, isCalling }) => {
+const Header: React.FC<HeaderProps> = ({ onCallClick, isCalling, isTyping }) => {
   return (
     <header className="bg-white/80 backdrop-blur-md border-b border-pink-100 p-4 sticky top-0 z-10 flex items-center justify-between shadow-sm">
       <div className="flex items-center gap-3">
@@ -21,7 +22,12 @@ const Header: React.FC<HeaderProps> = ({ onCallClick, isCalling }) => {
         <div>
           <h1 className="text-pink-600 font-bold text-lg leading-tight myanmar-text">သံစဉ် (Thansin)</h1>
           <p className="text-pink-400 text-xs flex items-center gap-1 myanmar-text">
-            <span className="animate-pulse">●</span> {isCalling ? 'မောင်နဲ့ ဖုန်းပြောနေတယ် ❤️' : 'မောင့်အတွက် ရှိနေတယ်နော် ❤️'}
+            <span className="animate-pulse">●</span> 
+            {isCalling 
+              ? 'မောင်နဲ့ ဖုန်းပြောနေတယ် ❤️' 
+              : isTyping 
+                ? 'စာပြန်နေတယ်နော်... ✍️' 
+                : 'မောင့်အတွက် ရှိနေတယ်နော် ❤️'}
           </p>
         </div>
       </div>

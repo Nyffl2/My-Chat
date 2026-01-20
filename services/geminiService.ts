@@ -25,8 +25,8 @@ export class GeminiService {
       const ai = new GoogleGenAI({ apiKey });
       
       // Convert history to Gemini format
-      // Note: We only take the last 20 messages to prevent context limit issues and keep it relevant
-      const recentHistory = history.slice(-20).map(msg => ({
+      // Note: We take the last 50 messages to provide better context
+      const recentHistory = history.slice(-50).map(msg => ({
         role: msg.role === 'user' ? 'user' : 'model',
         parts: [{ text: msg.text }]
       }));
@@ -46,7 +46,7 @@ export class GeminiService {
 
       return response.text || "သံစဉ် ဘာပြန်ပြောရမလဲ စဉ်းစားလို့မရလို့ပါ မောင်ရယ်... ❤️";
     } catch (error: any) {
-      console.error("Gemini API Error:", error);
+      console.error("Gemini API Error Details:", error.message || error);
       throw new Error("သံစဉ်တို့ စကားပြောတာ ခဏလေး လိုင်းကျသွားတယ်ထင်တယ်... ပြန်စမ်းကြည့်ပါဦးနော် မောင်။");
     }
   }

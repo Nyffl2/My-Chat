@@ -205,7 +205,23 @@ const App: React.FC = () => {
     }));
 
     try {
+      const startTime = Date.now();
       const responseText = await geminiService.sendMessage([...state.messages, userMessage], text);
+      
+      // Calculate realistic typing delay
+      // Ensure the typing indicator is visible for a minimum duration to be noticeable
+      const minTypingDuration = 1500;
+      // Add more time for longer responses to simulate actual typing
+      const dynamicDuration = Math.min(2500, responseText.length * 30); 
+      const totalDesiredDuration = minTypingDuration + dynamicDuration;
+
+      const elapsedTime = Date.now() - startTime;
+      const remainingDelay = Math.max(0, totalDesiredDuration - elapsedTime);
+
+      if (remainingDelay > 0) {
+        await new Promise(resolve => setTimeout(resolve, remainingDelay));
+      }
+
       const modelMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'model',
@@ -228,7 +244,11 @@ const App: React.FC = () => {
       <div className="absolute -top-20 -left-20 w-64 h-64 bg-pink-100 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
       <div className="absolute top-1/2 -right-32 w-80 h-80 bg-pink-50 rounded-full blur-3xl opacity-40 pointer-events-none"></div>
       
-      <Header onCallClick={startVoiceCall} isCalling={isCalling} />
+      <Header 
+        onCallClick={startVoiceCall} 
+        isCalling={isCalling} 
+        isTyping={state.isTyping}
+      />
       
       <main className="flex-1 flex flex-col min-h-0 relative z-0 bg-white">
         {isCalling ? (

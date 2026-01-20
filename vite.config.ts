@@ -6,7 +6,7 @@ import process from 'node:process';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   // Use the provided key if env var is missing
-  const apiKey = env.API_KEY || process.env.API_KEY || 'AIzaSyDEzmKB3PV-M83P6QyeNkXGnwj_TdLwV68';
+  const apiKey = env.API_KEY || process.env.API_KEY || 'AIzaSyA8lcdTGAHXJd8ko9Y9RaLHbkD47JYwvRQ';
   
   return {
     plugins: [react()],
